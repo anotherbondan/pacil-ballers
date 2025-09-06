@@ -113,5 +113,15 @@
       ]
   ```
 - Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
-    
+  - Buat proyek baru di PWS dan setup environment variable nya
+  - Menambahkan url deployment ke ALLOWED_HOST di settings.py
+    ```python
+    ALLOWED_HOSTS = [..., "ananda-gautama-pacilballers.pbp.cs.ui.ac.id"]
+    ```
+  - Deploy aplikasi ke PWS
+    ```bash
+    git remote add pws <link_proyek>
+    git branch -M main
+    git push pws main
+    ```
 
