@@ -24,7 +24,7 @@
     source env/Scripts/activate
     ```
   - Menyiapkan dan meng-install dependencies
-    ```bash
+    ```txt
     #requirements.txt
     django
     gunicorn
@@ -46,4 +46,26 @@
     - Inisiasi aplikasi
       ```bash
       python manage.py startapp main
+      ```
+    - Menambahkan main ke settings.py
+      ```python
+      INSTALLED_APPS = [..., 'main']
+      ```
+-  Melakukan routing pada proyek agar dapat menjalankan aplikasi main
+    - Membuat folder templates dan file main.html di dalamnya
+      ```html
+      <h1>{{app}}</h1>
+      <h2>{{name}}</h2>
+      <p>{{class}}</p>
+      ```
+    - Menambahkan path pada urls.py
+      ```python
+      from django.urls import path
+      from main.views import show_main
+      
+      app_name = 'main'
+      
+      urlpatterns = [
+          path('', show_main, name='show_main'),
+      ]
       ```
