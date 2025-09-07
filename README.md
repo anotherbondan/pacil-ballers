@@ -183,3 +183,28 @@
     git push pws main
     ```
 
+### Alur Workflow Django
+<img width="1920" height="1080" alt="django-workflow" src="https://github.com/user-attachments/assets/430c228a-4b2e-49f5-b2d5-93cde5d43a9e" />
+Ketika user mengakses URL, request akan dikirimkan ke web server lalu diteruskan ke Django. Django akan memproses request melalui urls.py untuk mencocokkan pola URL dengan fungsi atau class view yang sesuai. Jika ada parameter pada URL, urls.py akan mengekstraknya dan meneruskannya ke views.py.
+
+Di dalam views.py, request akan diproses: argumen divalidasi, logika bisnis dijalankan, dan jika diperlukan, data akan diambil atau diperbarui melalui models.py dengan bantuan Django ORM.
+
+Hasil pengolahan data dari view kemudian akan dirender menggunakan template (HTML page) yang sesuai. Template ini berisi kombinasi antara HTML statis dan data dinamis dari view.
+
+Akhirnya, Django mengembalikan hasil render tersebut sebagai HTTP response kepada user melalui browser.
+
+### Peran settings.py pada proyek Django
+settings.py merupakan file yang digunakan untuk melakukan konfigurasi terhadap proyek django. settings.py merupakan file yang digunakan untuk melakukan konfigurasi terhadap proyek Django. File ini berisi pengaturan penting seperti konfigurasi database, daftar aplikasi yang digunakan, middleware, lokasi template dan file statis, secret key, mode debug, daftar host yang diizinkan, serta pengaturan bahasa dan zona waktu. Semua komponen utama dalam proyek Django mengacu pada file ini agar dapat berjalan sesuai dengan kebutuhan developer.
+
+### Cara kerja migrasi database di Django
+Migrasi database pada Django merupakan mekanisme untuk menjaga kesesuaian antara definisi model di dalam kode program dengan struktur database yang digunakan. Proses ini dimulai ketika pengembang membuat atau memodifikasi model di file models.py. Perubahan tersebut belum langsung diterapkan ke database, sehingga perlu menjalankan perintah berikut. 
+```bash
+python manage.py makemigrations 
+```
+Perintah ini akan menghasilkan file migrasi yang berisi instruksi Python untuk merepresentasikan perubahan pada struktur database, misalnya pembuatan tabel baru, penambahan kolom, atau perubahan tipe data. Kemudian, jalankan perintah berikut ini.
+```bash
+python manage.py migrate
+```
+Perintah ini berfungsi untuk menerapkan instruksi dalam file migrasi ke database sebenarnya. Pada tahap ini Django akan mengeksekusi perintah SQL yang sesuai dengan isi file migrasi, sehingga struktur database berubah mengikuti definisi model terbaru. Mekanisme ini memudahkan pengembang untuk mengelola perubahan skema database secara teratur, konsisten, dan terdokumentasi dengan baik tanpa perlu menulis query SQL secara manual.
+
+### Mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
