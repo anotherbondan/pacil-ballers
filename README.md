@@ -43,6 +43,64 @@
     ```bash
     django-admin startproject pacil-ballers .
     ```
+  - Buat file .env dan .env.prod pada root proyek
+    ```
+    #.env
+    PRODUCTION=False
+    ```
+    ```
+    #.env.prod
+    DB_NAME=<nama database>
+    DB_HOST=<host database>
+    DB_PORT=<port database>
+    DB_USER=<username database>
+    DB_PASSWORD=<password database>
+    SCHEMA=tugas_individu
+    PRODUCTION=True
+    ```
+  - Tambahkan kode berikut pada settings.py untuk menggunakan environment variables
+    ```
+    #settings.py  
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    ```
+  - Konfigurasi DEBUG mode untuk keperluan development
+    ```python
+    PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+    ```
+  - Konfigurasi DATABASE untuk development
+    ```python
+    if PRODUCTION:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('DB_NAME'),
+                'USER': os.getenv('DB_USER'),
+                'PASSWORD': os.getenv('DB_PASSWORD'),
+                'HOST': os.getenv('DB_HOST'),
+                'PORT': os.getenv('DB_PORT'),
+                'OPTIONS': {
+                    'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
+                }
+            }
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    ```
+  - Lakukan migrasi database
+     ```bash
+     python manage.py migrate
+     ```
+  - Jalankan proyek secara lokal
+    ```bash
+    python manage.py runserver
+    ```
 - Membuat aplikasi dengan nama main pada proyek tersebut
     - Inisiasi aplikasi
       ```bash
