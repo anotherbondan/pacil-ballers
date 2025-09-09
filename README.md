@@ -43,6 +43,64 @@
     ```bash
     django-admin startproject pacil-ballers .
     ```
+  - Buat file .env dan .env.prod pada root proyek
+    ```
+    #.env
+    PRODUCTION=False
+    ```
+    ```
+    #.env.prod
+    DB_NAME=<nama database>
+    DB_HOST=<host database>
+    DB_PORT=<port database>
+    DB_USER=<username database>
+    DB_PASSWORD=<password database>
+    SCHEMA=tugas_individu
+    PRODUCTION=True
+    ```
+  - Tambahkan kode berikut pada settings.py untuk menggunakan environment variables
+    ```
+    #settings.py  
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    ```
+  - Konfigurasi DEBUG mode untuk keperluan development
+    ```python
+    PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+    ```
+  - Konfigurasi DATABASE untuk development
+    ```python
+    if PRODUCTION:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('DB_NAME'),
+                'USER': os.getenv('DB_USER'),
+                'PASSWORD': os.getenv('DB_PASSWORD'),
+                'HOST': os.getenv('DB_HOST'),
+                'PORT': os.getenv('DB_PORT'),
+                'OPTIONS': {
+                    'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
+                }
+            }
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+    ```
+  - Lakukan migrasi database
+     ```bash
+     python manage.py migrate
+     ```
+  - Jalankan proyek secara lokal
+    ```bash
+    python manage.py runserver
+    ```
 - Membuat aplikasi dengan nama main pada proyek tersebut
     - Inisiasi aplikasi
       ```bash
@@ -113,5 +171,44 @@
       ]
   ```
 - Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
-    
+  - Buat proyek baru di PWS dan setup environment variable nya
+  - Menambahkan url deployment ke ALLOWED_HOST di settings.py
+    ```python
+    ALLOWED_HOSTS = [..., "ananda-gautama-pacilballers.pbp.cs.ui.ac.id"]
+    ```
+  - Deploy aplikasi ke PWS
+    ```bash
+    git remote add pws <link_proyek>
+    git branch -M main
+    git push pws main
+    ```
 
+### Alur Workflow Django
+<img width="1920" height="1080" alt="django-workflow" src="https://github.com/user-attachments/assets/430c228a-4b2e-49f5-b2d5-93cde5d43a9e" />
+Ketika user mengakses URL, request akan dikirimkan ke web server lalu diteruskan ke Django. Django akan memproses request melalui urls.py untuk mencocokkan pola URL dengan fungsi atau class view yang sesuai. Jika ada parameter pada URL, urls.py akan mengekstraknya dan meneruskannya ke views.py.
+
+Di dalam views.py, request akan diproses: argumen divalidasi, logika bisnis dijalankan, dan jika diperlukan, data akan diambil atau diperbarui melalui models.py dengan bantuan Django ORM.
+
+Hasil pengolahan data dari view kemudian akan dirender menggunakan template (HTML page) yang sesuai. Template ini berisi kombinasi antara HTML statis dan data dinamis dari view.
+
+Akhirnya, Django mengembalikan hasil render tersebut sebagai HTTP response kepada user melalui browser.
+
+### Peran settings.py pada proyek Django
+settings.py merupakan file yang digunakan untuk melakukan konfigurasi terhadap proyek django. settings.py merupakan file yang digunakan untuk melakukan konfigurasi terhadap proyek Django. File ini berisi pengaturan penting seperti konfigurasi database, daftar aplikasi yang digunakan, middleware, lokasi template dan file statis, secret key, mode debug, daftar host yang diizinkan, serta pengaturan bahasa dan zona waktu. Semua komponen utama dalam proyek Django mengacu pada file ini agar dapat berjalan sesuai dengan kebutuhan developer.
+
+### Cara kerja migrasi database di Django
+Migrasi database pada Django merupakan mekanisme untuk menjaga kesesuaian antara definisi model di dalam kode program dengan struktur database yang digunakan. Proses ini dimulai ketika pengembang membuat atau memodifikasi model di file models.py. Perubahan tersebut belum langsung diterapkan ke database, sehingga perlu menjalankan perintah berikut. 
+```bash
+python manage.py makemigrations 
+```
+Perintah ini akan menghasilkan file migrasi yang berisi instruksi Python untuk merepresentasikan perubahan pada struktur database, misalnya pembuatan tabel baru, penambahan kolom, atau perubahan tipe data. Kemudian, jalankan perintah berikut ini.
+```bash
+python manage.py migrate
+```
+Perintah ini berfungsi untuk menerapkan instruksi dalam file migrasi ke database sebenarnya. Pada tahap ini Django akan mengeksekusi perintah SQL yang sesuai dengan isi file migrasi, sehingga struktur database berubah mengikuti definisi model terbaru. Mekanisme ini memudahkan pengembang untuk mengelola perubahan skema database secara teratur, konsisten, dan terdokumentasi dengan baik tanpa perlu menulis query SQL secara manual.
+
+### Mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+Django merupakan web framework berbasis Python. Menurut saya Django merupakan pilihan yang tepat untuk memulai pembelajaran pengembangan perangkat lunak karena mahasiswa sudah mempelajari Python di DDP1. Mahasiswa dapat fokus untuk mempelajari alur kerja pengembangan web tanpa terkendala bahasa pemrograman yang digunakan. Selain itu, Django menawarkan banyak fitur bawaan yang memudahkan pemula, mulai dari autentikasi, manajemen admin, hingga ORM untuk pengelolaan database, sehingga mahasiswa tidak perlu membangun segalanya dari awal. Django juga menggunakan arsitektur Model–View–Template (MVT) yang membantu mahasiswa dalam memahami pemisahan antara logika bisnis, data, dan tampilan secara terstruktur. Dari sisi teknis, Django memiliki performa yang cukup baik untuk aplikasi skala kecil hingga besar, serta didukung oleh dokumentasi yang lengkap dan mudah dipahami, sehingga sangat mendukung proses pembelajaran yang terarah dan efektif.
+
+### Feedback untuk asdos tutorial 1
+Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu. Semoga performa asdos tetap konsisten untuk sesi tutorial lainnya.
