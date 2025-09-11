@@ -1,14 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core import serializers
 from django.http import HttpResponse
 from main.models import Product
+from main.forms import ProductForm
 
 # Create your views here.
 def show_main(request):
+    product_list = Product.objects.all()
     context = {
         'app': 'Pacil Ballers',
         'name': 'Ananda Gautama Sekar Khosmana',
-        'class': 'PBP D'
+        'npm': '2406352613',
+        'class': 'PBP D',
+        'product_list': product_list
     }
 
     return render(request, "main.html", context)
@@ -39,3 +43,14 @@ def show_json_by_id(request, product_id):
         return HttpResponse(json_data, content_type="application/json")
     except Product.DoesNotExist:
         return HttpResponse(status=404)
+
+
+def create_product(request):
+    form = ProductForm(request.POST or None)
+    
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+    
+    context = {'form': form}
+    return render(request, "create_product.html", context)
