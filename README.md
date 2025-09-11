@@ -1,6 +1,7 @@
 
 # pacil-ballers
 
+## Tugas 2
 ### Step-by-step melengkapi checklist
 
 - Membuat sebuah proyek Django baru
@@ -212,3 +213,11 @@ Django merupakan web framework berbasis Python. Menurut saya Django merupakan pi
 
 ### Feedback untuk asdos tutorial 1
 Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu. Semoga performa asdos tetap konsisten untuk sesi tutorial lainnya.
+
+## Tugas 3
+### Step-by-step melengkapi checklist
+### Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+### Manakah yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+### Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+### Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+### Feedback untuk asdos tutorial 2 
