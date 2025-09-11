@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core import serializers
 from django.http import HttpResponse
 from main.models import Product
@@ -30,7 +30,6 @@ def show_xml_by_id(request, product_id):
     except Product.DoesNotExist:
         return HttpResponse(status=404)
 
-
 def show_json(request):
     product_list = Product.objects.all()
     json_data = serializers.serialize("json", product_list)
@@ -44,7 +43,6 @@ def show_json_by_id(request, product_id):
     except Product.DoesNotExist:
         return HttpResponse(status=404)
 
-
 def create_product(request):
     form = ProductForm(request.POST or None)
     
@@ -54,3 +52,12 @@ def create_product(request):
     
     context = {'form': form}
     return render(request, "create_product.html", context)
+
+def show_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    
+    context = {
+        'product': product
+    }
+    
+    return render(request, 'product_detail.html', context)
