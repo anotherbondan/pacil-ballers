@@ -137,7 +137,7 @@
       def __str__(self):
           return self.name
    ```
-- Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas kamu.
+- Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas
   - Membuat folder templates dan file main.html di dalamnya
       ```html
       <!--main.html-->
@@ -159,7 +159,7 @@
     
         return render(request, "main.html", context)
     ```
-- Membuat sebuah routing pada urls.py aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py.
+- Membuat sebuah routing pada urls.py aplikasi main untuk memetakan fungsi yang telah dibuat pada views.py
   ```python
       #urls.py
       from django.urls import path
@@ -171,7 +171,7 @@
           path('', show_main, name='show_main'),
       ]
   ```
-- Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
+- Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet
   - Buat proyek baru di PWS dan setup environment variable nya
   - Menambahkan url deployment ke ALLOWED_HOST di settings.py
     ```python
@@ -216,7 +216,193 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
 
 ## Tugas 3
 ### Step-by-step melengkapi checklist
+- Menambahkan 4 fungsi views baru untuk melihat objek yang sudah ditambahkan dalam format XML, JSON, XML by ID, dan JSON by ID
+  ```python
+  def show_xml(request):
+    product_list = Product.objects.all()
+    xml_data = serializers.serialize("xml", product_list)
+    return HttpResponse(xml_data, content_type="application/xml")
+
+  def show_xml_by_id(request, product_id):
+      try:
+          product_item = Product.objects.filter(pk=product_id)
+          xml_data = serializers.serialize("xml", product_item)
+          return HttpResponse(xml_data, content_type="application/xml")
+      except Product.DoesNotExist:
+          return HttpResponse(status=404)
+  
+  
+  def show_json(request):
+      product_list = Product.objects.all()
+      json_data = serializers.serialize("json", product_list)
+      return HttpResponse(json_data, content_type="application/json")
+  
+  def show_json_by_id(request, product_id):
+      try:
+          product_item = Product.objects.filter(pk=product_id)
+          json_data = serializers.serialize("json", product_item)
+          return HttpResponse(json_data, content_type="application/json")
+      except Product.DoesNotExist:
+          return HttpResponse(status=404)
+  ```
+- Membuat routing URL untuk masing-masing views yang telah ditambahkan pada poin 1
+  ```python
+  urlpatterns = [
+      ...
+      path('xml/', show_xml, name='show_xml'),
+      path('json/', show_json, name='show_json'),
+      path('/xml/<str:id>/', show_xml_by_id, name='show_xml_by_id'),
+      path('/json/<str:id>/', show_json_by_id, name='show_json_by_id')
+  ]
+  ```
+- Membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek
+  - Membuat base.html
+    ```html
+    {% load static %}
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {% block meta %} {% endblock meta %}
+      </head>
+    
+      <body>
+        {% block content %} {% endblock content %}
+      </body>
+    </html>
+    ```
+  - Konfigurasi base directory untuk templates
+    ```python
+    TEMPLATES = [
+      ...
+            'DIRS': [BASE_DIR / 'templates'],
+      ...
+    ]
+    ```
+  - Menambahkan elemen pada main.html
+    ```html
+    {% extends 'base.html' %}{% block content %}
+    <h1>{{app}}</h1>
+    <h4>Name: {{name}}</h4>
+    <h4>Class: {{class}}</h4>
+    
+    <a href="{% url 'main:create_product' %}">
+      <button>+ Add Product</button>
+    </a>
+    
+    {% if not product_list %}
+    <p>Belum ada produk.</p>
+    {% else %} 
+    {% for product in product_list %}
+    <hr />
+    {% endblock content %}
+    <h3>{{product.name}}</h3>
+    <p>
+      <b>{{ product.get_category_display }}</b>{% if product.is_featured %} |
+      <b>Featured</b>{% endif %} 
+    </p>
+    {% if product.thumbnail %}
+    <img src="{{product.thumbnail}}" alt="{{product.name}}" width="200"/>
+    {% endif %}
+    <h3><i>IDR {{product.price}}</i></h3>
+    <p>{{product.description}}</p>
+    <a href="{% url 'main:show_product' product.id %}">
+      <button>Show detail</button>
+    </a>
+    {% endfor %} {% endif %} {% endblock content %}
+    ```
+- Membuat halaman form untuk menambahkan objek model pada app sebelumnya
+  - Membuat forms.py
+    ```python
+    from django.forms import ModelForm
+    from main.models import Product
+    
+    class ProductForm(ModelForm):
+        class Meta:
+            model = Product
+            fields = ["name", "price", "description", "thumbnail", "category", "is_featured"]
+    ```
+  - Menambahkan function untuk menambahkan product pada views.py
+    ```python
+    def create_product(request):
+        form = ProductForm(request.POST or None)
+        
+        if form.is_valid() and request.method == 'POST':
+            form.save()
+            return redirect('main:show_main')
+        
+        context = {'form': form}
+        return render(request, "create_product.html", context)
+    ```
+    - Menambahkan url route untuk halaman menambahkan product
+      ```python
+      urlpatterns = [
+      ...
+          path('create-product/', create_product, name='create_product')
+      ]
+      ```
+    - Membuat create_product.html
+      ```html
+      {% extends 'base.html' %} {% block content %}
+      <a href="{% url 'main:show_main' %}">
+        <button>← Back to home</button>
+      </a>
+      <h3>Add Product</h3>
+      <form method="POST">
+        {% csrf_token %}
+        <table>
+          {{ form.as_table }}
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" value="Add Product" />
+            </td>
+          </tr>
+        </table>
+      </form>
+      {% endblock content %}
+      ```
+- Membuat halaman yang menampilkan detail dari setiap data objek model
+  - Menambahkan function untuk melihat detail product pada views.py
+    ```python
+    def show_product(request, id):
+        product = get_object_or_404(Product, pk=id)
+        
+        context = {
+            'product': product
+        }
+        
+        return render(request, 'product_detail.html', context)
+    ```
+  - Menambahkan url route untuk halaman detail product
+    ```python
+    urlpatterns = [
+    ...
+        path('show-product/<str:id>', show_product, name='show_product')
+    ]
+    ```
+  - Membuat product_detail.html
+    ```html
+    {% extends 'base.html' %} {% block content %}
+    <a href="{% url 'main:show_main' %}">
+      <button>← Back to home</button>
+    </a>
+    <h3>{{product.name}}</h3>
+    
+    {% if product.thumbnail %}
+    <img src="{{product.thumbnail}}" alt="{{product.name}}" width="200"/>
+    {% endif %}
+    <h3>
+      <i>IDR {{product.price}}</i>
+    </h3>
+    <p>{{product.description}}</p>
+    
+    {% endblock content %}
+    ```
 ### Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+Data delivery sangat penting dalam pengimplementasian sebuah platform karena berperan sebagai jembatan antara database dan client. Dengan mekanisme data delivery yang efektif, data dapat tersedia tepat waktu sehingga mendukung pengambilan keputusan yang cepat dan proses bisnis yang responsif. Selain itu, data delivery mempermudah integrasi antar sistem, serta memastikan setiap bagian memiliki informasi yang sama dan konsisten. Lebih dari itu, data delivery memastikan kualitas dan konsistensi data melalui validasi dan transformasi sebelum diterima pengguna. Tanpa data delivery yang baik, platform berisiko mengalami latensi tinggi, inkonsistensi informasi, dan pengalaman pengguna yang buruk, sehingga keberhasilan implementasi platform dapat terganggu.
+
 ### Manakah yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
 ### Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
 ### Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
