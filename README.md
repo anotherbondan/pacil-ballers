@@ -1,6 +1,7 @@
 
 # pacil-ballers
-
+- [Tugas 2](#tugas-2)
+- [Tugas 3](#tugas-3)
 ## Tugas 2
 ### Step-by-step melengkapi checklist
 
