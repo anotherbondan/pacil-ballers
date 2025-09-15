@@ -405,6 +405,11 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
 Data delivery sangat penting dalam pengimplementasian sebuah platform karena berperan sebagai jembatan antara database dan client. Dengan mekanisme data delivery yang efektif, data dapat tersedia tepat waktu sehingga mendukung pengambilan keputusan yang cepat dan proses bisnis yang responsif. Selain itu, data delivery mempermudah integrasi antar sistem, serta memastikan setiap bagian memiliki informasi yang sama dan konsisten. Lebih dari itu, data delivery memastikan kualitas dan konsistensi data melalui validasi dan transformasi sebelum diterima pengguna. Tanpa data delivery yang baik, platform berisiko mengalami latensi tinggi, inkonsistensi informasi, dan pengalaman pengguna yang buruk, sehingga keberhasilan implementasi platform dapat terganggu.
 
 ### Manakah yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+
 ### Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+Method is_valid() pada Django forms digunakan untuk memeriksa apakah data input sesuai dengan aturan validasi yang didefinisikan pada form. Method ini mengembalikan True jika semua field valid.Jika tidak, akan mengembalikan False. Method ini dibutuhkan untuk memastikan data yang diproses sudah bersih dan valid. Dengan demikian, data aman untuk disimpan ke database.
+
 ### Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
-### Feedback untuk asdos tutorial 2 
+
+### Feedback untuk asdos tutorial 2
+Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu.
