@@ -401,15 +401,22 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
     
     {% endblock content %}
     ```
+    
 ### Mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 Data delivery sangat penting dalam pengimplementasian sebuah platform karena berperan sebagai jembatan antara database dan client. Dengan mekanisme data delivery yang efektif, data dapat tersedia tepat waktu sehingga mendukung pengambilan keputusan yang cepat dan proses bisnis yang responsif. Selain itu, data delivery mempermudah integrasi antar sistem, serta memastikan setiap bagian memiliki informasi yang sama dan konsisten. Lebih dari itu, data delivery memastikan kualitas dan konsistensi data melalui validasi dan transformasi sebelum diterima pengguna. Tanpa data delivery yang baik, platform berisiko mengalami latensi tinggi, inkonsistensi informasi, dan pengalaman pengguna yang buruk, sehingga keberhasilan implementasi platform dapat terganggu.
 
 ### Manakah yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+JSON memiliki kelebihan utama berupa struktur yang ringkas, mudah dibaca, serta efisien dalam ukuran data. Formatnya berbasis objek dengan pasangan key-value sehingga mudah dipahami oleh developer. JSON juga cepat diproses karena parsing-nya lebih ringan dan umumnya sudah didukung secara native, terutama di JavaScript
+
+XML memiliki keunggulan dalam fleksibilitas dan kemampuan mendeskripsikan data yang kompleks. Struktur berbasis tag memungkinkan XML menyimpan data, metadata serta hierarki informasi yang kaya. XML juga mendukung validasi dengan skema (DTD atau XSD) sehingga cocok untuk aplikasi yang membutuhkan keandalan tinggi dalam memastikan format data.
+
+JSON menjadi lebih populer karena memiliki dukungan yang sangat luas dari berbagai teknologi modern. Hampir semua framework web, mobile, maupun database sudah menyediakan dukungan bawaan untuk JSON. Hal tersebut memudahkan integrasi dan pertukaran data di dalam sistem. Selain itu, JSON juga telah menjadi standar utama dalam API modern, seperti REST API, GraphQL, hingga berbagai layanan cloud, yang secara langsung mendorong penggunaannya sebagai format pertukaran data utama di berbagai aplikasi masa kini.
 
 ### Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
-Method is_valid() pada Django forms digunakan untuk memeriksa apakah data input sesuai dengan aturan validasi yang didefinisikan pada form. Method ini mengembalikan True jika semua field valid.Jika tidak, akan mengembalikan False. Method ini dibutuhkan untuk memastikan data yang diproses sudah bersih dan valid. Dengan demikian, data aman untuk disimpan ke database.
+Method is_valid() pada Django forms digunakan untuk memeriksa apakah data input sesuai dengan aturan validasi yang didefinisikan pada form. Method ini mengembalikan True jika semua field valid. Jika ada error, maka akan mengembalikan False. Method ini dibutuhkan untuk memastikan data yang diproses sudah bersih dan valid. Dengan demikian, data aman untuk disimpan ke database.
 
 ### Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+csrf_token merupakan mekanisme bawaan Django untuk mencegah Cross-Site Request Forgery (CSRF). Token unik ini disisipkan ke dalam form dan diverifikasi kembali oleh server saat request dikirim, sehingga hanya request dari halaman sah yang diterima. Tanpa csrf_token, server tidak bisa membedakan antara request asli dari user dan request palsu yang dikirim situs berbahaya. Hal ini membuka peluang bagi penyerang untuk mengeksploitasi sesi login user  tanpa sepengetahuan user. Misalnya dengan membuat form tersembunyi yang secara otomatis melakukan transfer uang, mengganti password, atau menghapus data penting.
 
 ### Feedback untuk asdos tutorial 2
 Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu.
