@@ -336,34 +336,34 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
         context = {'form': form}
         return render(request, "create_product.html", context)
     ```
-    - Menambahkan url route untuk halaman menambahkan product
-      ```python
-      urlpatterns = [
-      ...
-          path('create-product/', create_product, name='create_product')
-      ]
-      ```
-    - Membuat create_product.html
-      ```html
-      {% extends 'base.html' %} {% block content %}
-      <a href="{% url 'main:show_main' %}">
-        <button>← Back to home</button>
-      </a>
-      <h3>Add Product</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <table>
-          {{ form.as_table }}
-          <tr>
-            <td></td>
-            <td>
-              <input type="submit" value="Add Product" />
-            </td>
-          </tr>
-        </table>
-      </form>
-      {% endblock content %}
-      ```
+  - Menambahkan url route untuk halaman menambahkan product
+    ```python
+    urlpatterns = [
+    ...
+    path('create-product/', create_product, name='create_product')
+    ]
+    ```
+  - Membuat create_product.html
+    ```html
+    {% extends 'base.html' %} {% block content %}
+    <a href="{% url 'main:show_main' %}">
+      <button>← Back to home</button>
+    </a>
+    <h3>Add Product</h3>
+    <form method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" value="Add Product" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    {% endblock content %}
+    ```
 - Membuat halaman yang menampilkan detail dari setiap data objek model
   - Menambahkan function untuk melihat detail product pada views.py
     ```python
