@@ -420,3 +420,15 @@ csrf_token merupakan mekanisme bawaan Django untuk mencegah Cross-Site Request F
 
 ### Feedback untuk asdos tutorial 2
 Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu.
+
+### Screenshot Postman
+- URL: [show_json](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/json/)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 192935" src="https://github.com/user-attachments/assets/3766b8ea-437a-4b75-927c-9308281bbe53" />
+- URL: [show_json_by_id](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/json/1e26463d-1386-47f7-aae9-041c6ea2bc03)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 194953" src="https://github.com/user-attachments/assets/d6102a26-7a00-4c3a-8b7c-ad77408afb2a" />
+- URL: [show_xml](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/xml/)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 192948" src="https://github.com/user-attachments/assets/3d10ab61-e220-4884-9bcb-43f6a68fc65b" />
+- URL: [show_xml_by_id](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/xml/1e26463d-1386-47f7-aae9-041c6ea2bc03)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 193932" src="https://github.com/user-attachments/assets/ccca2384-a1a2-4a87-864e-674f50f73643" />
+
+
