@@ -2,6 +2,7 @@
 # pacil-ballers
 - [Tugas 2](#tugas-2)
 - [Tugas 3](#tugas-3)
+- [Tugas 4](#tugas-4)
 ## Tugas 2
 ### Step-by-step melengkapi checklist
 
@@ -336,34 +337,34 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
         context = {'form': form}
         return render(request, "create_product.html", context)
     ```
-    - Menambahkan url route untuk halaman menambahkan product
-      ```python
-      urlpatterns = [
-      ...
-          path('create-product/', create_product, name='create_product')
-      ]
-      ```
-    - Membuat create_product.html
-      ```html
-      {% extends 'base.html' %} {% block content %}
-      <a href="{% url 'main:show_main' %}">
-        <button>← Back to home</button>
-      </a>
-      <h3>Add Product</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <table>
-          {{ form.as_table }}
-          <tr>
-            <td></td>
-            <td>
-              <input type="submit" value="Add Product" />
-            </td>
-          </tr>
-        </table>
-      </form>
-      {% endblock content %}
-      ```
+  - Menambahkan url route untuk halaman menambahkan product
+    ```python
+    urlpatterns = [
+    ...
+    path('create-product/', create_product, name='create_product')
+    ]
+    ```
+  - Membuat create_product.html
+    ```html
+    {% extends 'base.html' %} {% block content %}
+    <a href="{% url 'main:show_main' %}">
+      <button>← Back to home</button>
+    </a>
+    <h3>Add Product</h3>
+    <form method="POST">
+      {% csrf_token %}
+      <table>
+        {{ form.as_table }}
+        <tr>
+          <td></td>
+          <td>
+            <input type="submit" value="Add Product" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    {% endblock content %}
+    ```
 - Membuat halaman yang menampilkan detail dari setiap data objek model
   - Menambahkan function untuk melihat detail product pada views.py
     ```python
@@ -420,3 +421,30 @@ csrf_token merupakan mekanisme bawaan Django untuk mencegah Cross-Site Request F
 
 ### Feedback untuk asdos tutorial 2
 Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban yang diberikan juga sudah cukup jelas dan sangat membantu.
+
+### Screenshot Postman
+- URL: [show_json](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/json/)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 192935" src="https://github.com/user-attachments/assets/3766b8ea-437a-4b75-927c-9308281bbe53" />
+
+- URL: [show_json_by_id](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/json/1e26463d-1386-47f7-aae9-041c6ea2bc03)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 194953" src="https://github.com/user-attachments/assets/d6102a26-7a00-4c3a-8b7c-ad77408afb2a" />
+
+- URL: [show_xml](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/xml/)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 192948" src="https://github.com/user-attachments/assets/3d10ab61-e220-4884-9bcb-43f6a68fc65b" />
+
+- URL: [show_xml_by_id](https://ananda-gautama-pacilballers.pbp.cs.ui.ac.id/xml/1e26463d-1386-47f7-aae9-041c6ea2bc03)
+<img width="1920" height="1128" alt="Screenshot 2025-09-16 193932" src="https://github.com/user-attachments/assets/ccca2384-a1a2-4a87-864e-674f50f73643" />
+
+
+## Tugas 4
+
+### Step-by-step melengkapi checklist
+-  Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna mengakses aplikasi sebelumnya sesuai dengan status login/logoutnya
+-  Membuat dua (2) akun pengguna dengan masing-masing tiga (3) dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal
+-  Menghubungkan model Product dengan User
+-  Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last_login pada halaman utama aplikasi
+
+### Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+### Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+### Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
