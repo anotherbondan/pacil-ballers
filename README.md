@@ -440,11 +440,165 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
 
 ### Step-by-step melengkapi checklist
 -  Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna mengakses aplikasi sebelumnya sesuai dengan status login/logoutnya
+   - Membuat fungsi baru untuk registrasi, login, dan logout
+     ```python
+     def register(request):
+          form = UserCreationForm()
+      
+          if request.method == "POST":
+              form = UserCreationForm(request.POST)
+              if form.is_valid():
+                  form.save()
+                  messages.success(request, 'Your account has been successfully created!')
+                  return redirect('main:login')
+          context = {'form':form}
+          return render(request, 'register.html', context)
+      
+     def login_user(request): 
+         if request.method == 'POST':
+             form = AuthenticationForm(data=request.POST)
+              
+             if form.is_valid():
+                 user = form.get_user()
+                 login(request, user)
+                 response = HttpResponseRedirect(reverse('main:show_main'))
+                 response.set_cookie('last_login', str(datetime.datetime.now()))
+                 return response
+              
+         else:
+             form = AuthenticationForm(request)
+          
+         context = {'form': form}
+         return render(request, 'login.html', context)
+      
+     def logout_user(request): 
+         logout(request)
+         response = HttpResponseRedirect(reverse('main:login'))
+         response.delete_cookie('last_login')
+         return response
+     ```
+   - Menambahkan route untuk masing-masing function
+     ```python
+     urlpatterns = [
+         ...
+         path('login/', login_user, name='login'),
+         path('logout/', logout_user, name='logout'),
+         path('register/', register, name='register'),
+         ...
+     ]
+     ```
 -  Membuat dua (2) akun pengguna dengan masing-masing tiga (3) dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal
+   - Buat halaman register.html untuk membuat akun baru
+     ```html
+     {% extends 'base.html' %} {% block meta %}
+     <title>Register</title>
+     {% endblock meta %} {% block content %}
+      
+     <div>
+       <h1>Register</h1>
+      
+       <form method="POST">
+         {% csrf_token %}
+         <table>
+           {{ form.as_table }}
+           <tr>
+             <td></td>
+             <td><input type="submit" name="submit" value="Daftar" /></td>
+           </tr>
+         </table>
+       </form>
+      
+       {% if messages %}
+       <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+       </ul>
+       {% endif %}
+     </div>
+      
+     {% endblock content %}
+     ```
+   - Buat halaman login.html untuk user login
+     ```html
+     {% extends 'base.html' %} {% block meta %}
+     <title>Login</title>
+     {% endblock meta %} {% block content %}
+     <div class="login">
+       <h1>Login</h1>
+      
+       <form method="POST" action="">
+         {% csrf_token %}
+         <table>
+           {{ form.as_table }}
+           <tr>
+             <td></td>
+             <td><input class="btn login_btn" type="submit" value="Login" /></td>
+           </tr>
+         </table>
+       </form>
+     
+       {% if messages %}
+       <ul>
+         {% for message in messages %}
+         <li>{{ message }}</li>
+         {% endfor %}
+       </ul>
+       {% endif %} Don't have an account yet?
+       <a href="{% url 'main:register' %}">Register Now</a>
+     </div>
+      
+     {% endblock content %}
+     ```
+   - Jalankan server di local dan buka http://localhost:8000/register
+     ```bash
+     python manage.py runserver
+     ```
+   - Masukkan username dan password untuk membuat akun baru
 -  Menghubungkan model Product dengan User
+   - Menambahkan field user pada model Product sebagai foreign key
+   ```python
+   ...
+   user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+   ...
+   ```
+   - Lakukan migrasi
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 -  Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last_login pada halaman utama aplikasi
-
+   - Modifikasi function show_main
+     ```python
+     @login_required(login_url='/login')
+     def show_main(request):
+         filter_type = request.GET.get("filter", "all")  # default 'all'
+     
+         if filter_type == "all":
+             product_list = Product.objects.all()
+         else:
+             product_list = Product.objects.filter(user=request.user)
+            
+         context = {
+             'app': 'Pacil Ballers',
+             'name': request.user.username,
+             'npm': '2406352613',
+             'class': 'PBP D',
+             'product_list': product_list,
+             'last_login': request.COOKIES.get('last_login', 'Never')
+         }
+    
+         return render(request, "main.html", context)
+     ```
+   - Tambahkan informasi login pada main.html
+     ```html
+     ...
+     <h5>Sesi terakhir login: {{ last_login }}</h5>
+     ...
+     ```
+     
 ### Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+Django AuthenticationForm adalah form bawaan Django yang digunakan untuk proses login pengguna. Form ini berfungsi untuk memvalidasi apakah username dan password yang di input user sesuai dengan data pada database.
 ### Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
 ### Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
 ### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
