@@ -7,18 +7,31 @@
   <button>+ Add Product</button>
 </a>
 
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<a href="?filter=all">
+  <button type="button">All Articles</button>
+</a>
+
+<a href="?filter=my">
+  <button type="button">My Articles</button>
+</a>
+
 {% if not product_list %}
 <p>Belum ada produk.</p>
-{% else %} 
-{% for product in product_list %}
+{% else %} {% for product in product_list %}
 <hr />
 <h3>{{product.name}}</h3>
 <p>
   <b>{{ product.get_category_display }}</b>{% if product.is_featured %} |
-  <b>Featured</b>{% endif %} 
+  <b>Featured</b>{% endif %}
 </p>
 {% if product.thumbnail %}
-<img src="{{product.thumbnail}}" alt="{{product.name}}" width="200"/>
+<img src="{{product.thumbnail}}" alt="{{product.name}}" width="200" />
 {% endif %}
 <h3><i>IDR {{product.price}}</i></h3>
 <p>{{product.description}}</p>
