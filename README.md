@@ -599,11 +599,11 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
      
 ### Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
 Django AuthenticationForm adalah form bawaan Django yang digunakan untuk proses login pengguna. Form ini berfungsi untuk memvalidasi apakah username dan password yang di input user sesuai dengan data pada database.
-Kelebihan 
+#### Kelebihan 
 - Tidak perlu membuat form login dari nol karena sudah disediakan
 - Validasi otomatis username dan password dengan database user
 - Terintegrasi dengan middleware Django
-Kekurangan
+#### Kekurangan
 - Hanya mendukung login via username dan password
 - UI polosan, perlu di style lagi dengan CSS
 - Kurang fleksibel untuk autentikasi modern, seperti 2FA
@@ -611,7 +611,7 @@ Kekurangan
 ### Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
 Otentikasi dan otorisasi adalah proses yang terkait tetapi berbeda dalam sistem manajemen identitas dan akses organisasi. Autentikasi memverifikasi identitas pengguna. Proses autentikasi bergantung pada kredensial, seperti kata sandi atau pemindaian sidik jari, yang ditunjukkan pengguna untuk membuktikan bahwa mereka adalah orang yang mereka klaim. Otorisasi memberi pengguna tingkat akses yang tepat ke sumber daya sistem. Proses otorisasi bergantung pada izin pengguna yang menguraikan apa yang bisa dilakukan setiap pengguna dalam sumber daya atau jaringan tertentu. Misalnya, izin dalam sistem file mungkin menentukan apakah pengguna dapat membuat, membaca, memperbarui, atau menghapus file.
 
-Pada Django, autentikasi diatur oleh sistem django.contrib.auth. Terdapat model bawaan untuk User yang menyimpan username dan hashed password. Adapun fungsi-fungsi penting dalam autentikasi Django, seperti authenticate, login, dan logout. Fungsi authenticate digunakan untuk memeriksa keberadaan User pada database. Fungsi login akan membuat session untuk user. Fungsi logout dipakai untuk menghapus session user. Sedangkan untuk authorization, terdapat permission, dimana seorang user diberikan izin khusus. Selain itu ada decorator yang dapat digunakan untuk kontrol akses suatu fungsi. Misalnya @login_required, berarti hanya user yang sudah login yang dapat mengakses.
+Pada Django, autentikasi diatur oleh sistem django.contrib.auth. Terdapat model bawaan untuk User yang menyimpan username dan hashed password. Adapun fungsi-fungsi penting dalam autentikasi Django, seperti authenticate, login, dan logout. Fungsi authenticate digunakan untuk memeriksa keberadaan User pada database. Fungsi login akan membuat session untuk user. Fungsi logout dipakai untuk menghapus session user. Sedangkan untuk authorization, terdapat permission, dimana seorang user diberikan izin khusus. Selain itu ada decorator yang dapat digunakan untuk kontrol akses suatu fungsi. Misalnya @login_required, berarti hanya user yang sudah login yang dapat mengakses fungsi tersebut.
 
 ### Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
 ### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
