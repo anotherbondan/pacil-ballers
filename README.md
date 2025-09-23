@@ -555,6 +555,8 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
      python manage.py runserver
      ```
    - Masukkan username dan password untuk membuat akun baru
+   - Jika akun baru berhasil dibuat, lanjutkan login dengan username dan password yang sesuai
+   - Tambahkan data dummy untuk setiap akun
 -  Menghubungkan model Product dengan User
    - Menambahkan field user pada model Product sebagai foreign key
    ```python
@@ -611,7 +613,20 @@ Django AuthenticationForm adalah form bawaan Django yang digunakan untuk proses 
 ### Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
 Otentikasi dan otorisasi adalah proses yang terkait tetapi berbeda dalam sistem manajemen identitas dan akses organisasi. Autentikasi memverifikasi identitas pengguna. Proses autentikasi bergantung pada kredensial, seperti kata sandi atau pemindaian sidik jari, yang ditunjukkan pengguna untuk membuktikan bahwa mereka adalah orang yang mereka klaim. Otorisasi memberi pengguna tingkat akses yang tepat ke sumber daya sistem. Proses otorisasi bergantung pada izin pengguna yang menguraikan apa yang bisa dilakukan setiap pengguna dalam sumber daya atau jaringan tertentu. Misalnya, izin dalam sistem file mungkin menentukan apakah pengguna dapat membuat, membaca, memperbarui, atau menghapus file.
 
-Pada Django, autentikasi diatur oleh sistem django.contrib.auth. Terdapat model bawaan untuk User yang menyimpan username dan hashed password. Adapun fungsi-fungsi penting dalam autentikasi Django, seperti authenticate, login, dan logout. Fungsi authenticate digunakan untuk memeriksa keberadaan User pada database. Fungsi login akan membuat session untuk user. Fungsi logout dipakai untuk menghapus session user. Sedangkan untuk authorization, terdapat permission, dimana seorang user diberikan izin khusus. Selain itu ada decorator yang dapat digunakan untuk kontrol akses suatu fungsi. Misalnya @login_required, berarti hanya user yang sudah login yang dapat mengakses fungsi tersebut.
+Pada Django, autentikasi diatur oleh sistem django.contrib.auth. Terdapat model bawaan untuk User yang menyimpan username dan hashed password. Adapun fungsi-fungsi penting dalam autentikasi Django, seperti authenticate(), login(), dan logout(). Fungsi authenticate() digunakan untuk memeriksa keberadaan User pada database. Fungsi login() akan membuat session baru untuk user. Fungsi logout() dipakai untuk menghapus session user. Sedangkan untuk authorization, terdapat permission, dimana seorang user diberikan izin khusus. Selain itu ada decorator yang dapat digunakan untuk kontrol akses suatu fungsi. Misalnya @login_required, berarti hanya user yang sudah login yang dapat mengakses fungsi tersebut.
 
 ### Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+Cookies merupakan data kecil yang dibuat oleh aplikasi web dan disimpan di browser. Cookies biasanya berisi session ID yang digunakan untuk mengakses data session dari server. 
+#### Kelebihan 
+- Ringan di sisi client, karena hanya perlu menyimpan session ID
+- Keamanan data lebih terjamin karena tidak disimpan di browser
+- Mudah dikelola server karena semua data terpusat di backend
+#### Kekurangan
+- Server mungkin terbebani jika ada banyak user aktif
+- Session yang sudah tidak aktif perlu dibersihkan secara berkala
+- Ketergantungan dengan cookies sehingga user harus menyalakannya untuk menggunakan session
+
 ### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+Cookies tidak sepenuhnya aman secara default. Cookies rentan terhadap sejumlah risiko, seperti pencurian melalui jaringan yang tidak terenkripsi, akses oleh script berbahaya akibat serangan XSS, serta penyalahgunaan melalui CSRF. Risiko lain seperti session hijacking juga dapat terjadi apabila penyerang berhasil menebak atau mencuri session ID. 
+
+Untuk mengatasi masalah tersebut, Django menyediakan sejumlah perlindungan bawaan. Secara default, cookies untuk session sudah diberi atribut HttpOnly. Sehingga, session ID tidak dapat diakses oleh JavaScript dan mengurangi kemungkinan dicuri melalui XSS. Django juga menetapkan atribut SameSite dengan nilai "Lax". Atribut ini membantu mencegah serangan CSRF dengan membatasi pengiriman cookies lintas situs. Selain itu, Django menggunakan mekanisme CSRF token pada form untuk memastikan bahwa setiap permintaan yang mengubah data benar-benar berasal dari pengguna yang sah.
