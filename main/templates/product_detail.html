@@ -5,11 +5,15 @@
 <h3>{{product.name}}</h3>
 
 {% if product.thumbnail %}
-<img src="{{product.thumbnail}}" alt="{{product.name}}" width="200"/>
+<img src="{{product.thumbnail}}" alt="{{product.name}}" width="200" />
 {% endif %}
 <h3>
   <i>IDR {{product.price}}</i>
 </h3>
 <p>{{product.description}}</p>
+{% if product.user %}
+<p>Seller: {{ product.user.username }}</p>
+{% else %}
+<p>Seller: Anonymous</p>
 
-{% endblock content %}
+{% endif %} {% endblock content %}
