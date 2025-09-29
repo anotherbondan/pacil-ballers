@@ -3,6 +3,7 @@
 - [Tugas 2](#tugas-2)
 - [Tugas 3](#tugas-3)
 - [Tugas 4](#tugas-4)
+- [Tugas 5](#tugas-5)
 ## Tugas 2
 ### Step-by-step melengkapi checklist
 
@@ -555,6 +556,8 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
      python manage.py runserver
      ```
    - Masukkan username dan password untuk membuat akun baru
+   - Jika akun baru berhasil dibuat, lanjutkan login dengan username dan password yang sesuai
+   - Tambahkan data dummy untuk setiap akun
 -  Menghubungkan model Product dengan User
    - Menambahkan field user pada model Product sebagai foreign key
    ```python
@@ -599,6 +602,90 @@ Asdos selalu siap menerima pertanyaan ketika sesi tutorial berlangsung. Jawaban 
      
 ### Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
 Django AuthenticationForm adalah form bawaan Django yang digunakan untuk proses login pengguna. Form ini berfungsi untuk memvalidasi apakah username dan password yang di input user sesuai dengan data pada database.
+#### Kelebihan 
+- Tidak perlu membuat form login dari nol karena sudah disediakan
+- Validasi otomatis username dan password dengan database user
+- Terintegrasi dengan middleware Django
+#### Kekurangan
+- Hanya mendukung login via username dan password
+- UI polosan, perlu di style lagi dengan CSS
+- Kurang fleksibel untuk autentikasi modern, seperti 2FA
+
 ### Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+Otentikasi dan otorisasi adalah proses yang terkait tetapi berbeda dalam sistem manajemen identitas dan akses organisasi. Autentikasi memverifikasi identitas pengguna. Proses autentikasi bergantung pada kredensial, seperti kata sandi atau pemindaian sidik jari, yang ditunjukkan pengguna untuk membuktikan bahwa mereka adalah orang yang mereka klaim. Otorisasi memberi pengguna tingkat akses yang tepat ke sumber daya sistem. Proses otorisasi bergantung pada izin pengguna yang menguraikan apa yang bisa dilakukan setiap pengguna dalam sumber daya atau jaringan tertentu. Misalnya, izin dalam sistem file mungkin menentukan apakah pengguna dapat membuat, membaca, memperbarui, atau menghapus file.
+
+Pada Django, autentikasi diatur oleh sistem django.contrib.auth. Terdapat model bawaan untuk User yang menyimpan username dan hashed password. Adapun fungsi-fungsi penting dalam autentikasi Django, seperti authenticate(), login(), dan logout(). Fungsi authenticate() digunakan untuk memeriksa keberadaan User pada database. Fungsi login() akan membuat session baru untuk user. Fungsi logout() dipakai untuk menghapus session user. Sedangkan untuk authorization, terdapat permission, dimana seorang user diberikan izin khusus. Selain itu ada decorator yang dapat digunakan untuk kontrol akses suatu fungsi. Misalnya @login_required, berarti hanya user yang sudah login yang dapat mengakses fungsi tersebut.
+
 ### Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+Cookies merupakan data kecil yang dibuat oleh aplikasi web dan disimpan di browser. Cookies biasanya berisi session ID yang digunakan untuk mengakses data session dari server. 
+#### Kelebihan 
+- Ringan di sisi client, karena hanya perlu menyimpan session ID
+- Keamanan data lebih terjamin karena tidak disimpan di browser
+- Mudah dikelola server karena semua data terpusat di backend
+#### Kekurangan
+- Server mungkin terbebani jika ada banyak user aktif
+- Session yang sudah tidak aktif perlu dibersihkan secara berkala
+- Ketergantungan dengan cookies sehingga user harus menyalakannya untuk menggunakan session
+
 ### Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+Cookies tidak sepenuhnya aman secara default. Cookies rentan terhadap sejumlah risiko, seperti pencurian melalui jaringan yang tidak terenkripsi, akses oleh script berbahaya akibat serangan XSS, serta penyalahgunaan melalui CSRF. Risiko lain seperti session hijacking juga dapat terjadi apabila penyerang berhasil menebak atau mencuri session ID. 
+
+Untuk mengatasi masalah tersebut, Django menyediakan sejumlah perlindungan bawaan. Secara default, cookies untuk session sudah diberi atribut HttpOnly. Sehingga, session ID tidak dapat diakses oleh JavaScript dan mengurangi kemungkinan dicuri melalui XSS. Django juga menetapkan atribut SameSite dengan nilai "Lax". Atribut ini membantu mencegah serangan CSRF dengan membatasi pengiriman cookies lintas situs. Selain itu, Django menggunakan mekanisme CSRF token pada form untuk memastikan bahwa setiap permintaan yang mengubah data benar-benar berasal dari pengguna yang sah.
+
+## Tugas 5
+### Step-by-step melengkapi checklist
+### Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+Berikut merupakan urutan prioritas pengambilan CSS untuk suatu elemen.
+1. Inline style
+CSS yang ditulis langsung pada elemen HTML dengan atribut style="". Ini punya prioritas paling tinggi dibanding CSS dari <style> atau file .css. 
+```html
+<p style="color:red;">
+```
+2. ID selector
+Selektor dengan tanda pagar #id.
+```css
+#title {
+color: blue;
+}
+```
+3. Class, pseudo-class, attribute selector
+```css
+.teks {}
+a:hover {}
+[type="text"] {}
+```
+4. Element selector dan pseudo-element
+```css
+p {}, h1 {}, ::before {}
+```
+Namun, ada aturan khusus pada CSS yang dapat memengaruhi urutan prioritas pengambilan CSS suatu elemen, yaitu !important. Aturan ini dapat mengalahkan semua selector lain, tetapi tetap bisa dikalahkan oleh aturan lain yang juga pakai !important dengan specificity lebih tinggi. Jika dua aturan memiliki specificity sama, maka yang muncul terakhir dalam CSS-lah yang dipakai.
+
+### Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+Dalam pengembangan aplikasi web, responsive design adalah salah satu konsep yang sangat penting. Responsive design memungkinkan satu aplikasi web menyesuaikan tampilan secara otomatis berdasarkan ukuran layar. Dengan cara ini, pengguna tetap merasa nyaman, entah mereka membuka aplikasi melalui ponsel saat sedang bepergian, atau lewat laptop ketika bekerja. Pengguna mengakses internet melalui beragam perangkat dengan ukuran layar yang berbeda-beda, mulai dari mobile, tablet, hingga desktop. Jika sebuah aplikasi web tidak responsif, tampilan halaman dalam ukuran layar tertentu akan terlihat berantakan dan tidak jelas. Hal ini dapat mengurangi pengalaman pengguna dan pada akhirnya dapat membuat mereka enggan menggunakan aplikasi tersebut. 
+
+Salah satu contoh aplikasi yang sudah menerapkan responsive design adalah YouTube. Saat dibuka di laptop, YouTube menampilkan sidebar dengan daftar menu lengkap. Namun, jika dibuka di mobile, tampilan bergeser menjadi lebih ringkas, contohnya menu masuk ke ikon hamburger, video ditampilkan dalam satu kolom, dan elemen-elemen sekunder dipindahkan ke bagian bawah. Semua penyesuaian itu membuat navigasi tetap mudah meskipun layar lebih kecil. Sedangkan, salah satu contoh aplikasi yang belum menerapkan responsive design website adalah website Pemerintah Kota Jakarta Utara. Pada ukuran mobile, ada beberapa section yang terlihat berantakan, seperti teks dan gambar yang keluar layar, jarak antar elemen terlalu besar dan ukuran teks yang terlalu besar.
+
+### Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+- Margin merupakan ruang di luar elemen, antara elemen dengan elemen lainnya di sekitarnya. Berikut contoh implementasi margin sebesar 20px.
+```css
+.box {
+margin: 20px;
+}
+```
+- Border merupakan garis pembatas di sekeliling konten dan padding sebuah elemen. Berikut contoh implementasi border setebal 2px berwarna hitam.
+```css
+.box {
+border: 2px solid black;
+}
+```
+- Padding merupakan ruang di dalam elemen antara content dengan border. Berikut contoh implementasi padding sebesar 15px.
+```css
+.box {
+padding: 15px;
+}
+```
+
+### Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+Flexbox bekerja dengan konsep satu dimensi, di mana hanya dapat mengatur elemen dalam satu arah, baik secara vertikal maupun horizontal. Flexbox memungkinkan sebuah elemen untuk menyesuaikan ukurannya sesuai dengan ruang yang tersedia secara otomatis. Flexbox juga dapat mengatur jarak antar elemen di dalamnya dan proporsi ruang yang dimiliki oleh masing-masing elemen. Dalam immplementasi nyata, flexbox biasanya digunakan untuk mengatur susunan input form, list menu, dan tombol navigasi.
+
+Grid layout bekerja dengan konsep dua dimensi, dimana baris dan kolom elemen dapat diatur sekaligus. Grid layout dapat menentukan berapa banyak kolom dan baris yang dibutuhkan, serta bagaimana tiap elemen menempati posisi tertentu di dalam sebuah grid. Grid memungkinkan tata letak yang lebih kompleks dan terstruktur rapi, mirip dengan tabel, tetapi jauh lebih fleksibel dan responsif. Grid biasanya digunakan untuk membangun sebuah halaman dashboard yang memiliki tata letak elemen yang kompleks, seperti header, footer, sidebar, dan content.
