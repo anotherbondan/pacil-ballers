@@ -634,6 +634,27 @@ Untuk mengatasi masalah tersebut, Django menyediakan sejumlah perlindungan bawaa
 
 ## Tugas 5
 ### Step-by-step melengkapi checklist
+- Implementasikan fungsi untuk menghapus dan mengedit product
+  ```python
+  def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_main')
+
+    context = {
+        'form': form
+    }
+
+    return render(request, "edit_product.html", context)
+
+  def delete_product(request, id):
+      product = get_object_or_404(Product, pk=id)
+      product.delete()
+      return HttpResponseRedirect(reverse('main:show_main'))
+  ```
+- Kustomisasi desain pada template HTML yang telah dibuat pada tugas-tugas sebelumnya menggunakan TailwindCSS. Source code terlampir pada repository.
 ### Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
 Berikut merupakan urutan prioritas pengambilan CSS untuk suatu elemen.
 1. Inline style
