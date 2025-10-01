@@ -45,7 +45,7 @@
     <!-- Product Grid -->
     {% if not product_list %}
     <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-      <div class="w-32 h-32 mx-auto mb-4">
+      <div class="w-32 h-32 mx-auto mb-4 hover:rotate-6 transition-all duration-700">
         <img
           src="{% static 'image/no-product.png' %}"
           alt="No product available"
@@ -58,7 +58,7 @@
       </p>
       <a
         href="{% url 'main:create_product' %}"
-        class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+        class="inline-flex items-center px-4 py-2 bg-gradient-to-tr from-blue-400 to-red-400 text-white rounded-md hover:brightness-90 transition-all"
       >
         Create Product
       </a>

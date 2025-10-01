@@ -1,16 +1,19 @@
+{% load static %}
 <nav
   class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50"
 >
   <div class="max-w-7xl mx-auto px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center">
-        <h1 class="text-xl font-semibold text-gray-900">
-          <span
+        <a href="/" class="flex items-center gap-1">
+          <h1 class="text-xl font-semibold text-gray-900">
+            <span
             class="text-transparent bg-gradient-to-tr from-blue-400 to-red-400 bg-clip-text"
             >Pacil</span
-          >
-          Ballers
-        </h1>
+            >
+            Ballers
+          </h1>
+        </a>
       </div>
 
       <!-- Desktop Navigation -->
@@ -42,20 +45,20 @@
         </div>
         <a
           href="{% url 'main:logout' %}"
-          class="text-red-600 hover:text-red-700 font-medium transition-colors"
+          class="text-red-600 hover:text-red-700 font-medium transition-all"
         >
           Logout
         </a>
         {% else %}
         <a
           href="{% url 'main:login' %}"
-          class="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+          class="text-gray-600 hover:text-gray-900 font-medium transition-all"
         >
           Login
         </a>
         <a
           href="{% url 'main:register' %}"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-all"
         >
           Register
         </a>
@@ -65,7 +68,7 @@
       <!-- Mobile Menu Button -->
       <div class="md:hidden flex items-center">
         <button
-          class="mobile-menu-button p-2 text-gray-600 hover:text-gray-900 transition-colors"
+          class="mobile-menu-button p-2 text-gray-600 hover:text-gray-900 transition-all"
         >
           <span class="sr-only">Open menu</span>
           <div class="w-6 h-6 flex flex-col justify-center items-center">
@@ -90,13 +93,13 @@
       <div class="space-y-1">
         <a
           href="/"
-          class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors"
+          class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-all"
         >
           Home
         </a>
         <a
           href="{% url 'main:create_product' %}"
-          class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors"
+          class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-all"
         >
           Create Product
         </a>
@@ -115,7 +118,7 @@
         </div>
         <a
           href="{% url 'main:logout' %}"
-          class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors"
+          class="block text-red-600 hover:text-red-700 font-medium py-3 transition-all"
         >
           Logout
         </a>
@@ -123,13 +126,13 @@
         <div class="space-y-3">
           <a
             href="{% url 'main:login' %}"
-            class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors"
+            class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-all"
           >
             Login
           </a>
           <a
             href="{% url 'main:register' %}"
-            class="block bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded text-center transition-colors"
+            class="block bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded text-center transition-all"
           >
             Register
           </a>
