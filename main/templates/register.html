@@ -23,22 +23,32 @@
           </div>
           {% endfor %}
         </div>
-        {% endif %} {% if form.errors %}
+        {% endif %} 
+        {% if form.errors %}
         <div class="mb-6">
-          {% for field, errors in form.errors.items %} {% if field != '__all__'
-          %} {% for error in errors %}
+          {% for field, errors in form.errors.items %} 
+          {% if field != '__all__'%} 
+          {% for error in errors %}
           <div
             class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2"
           >
             <strong>{{ field|title }}:</strong> {{ error }}
           </div>
-          {% endfor %} {% endfor %}
+          {% endfor %}{% endif %} {% endfor %}
         </div>
         {% endif %}
 
-        <form method="POST" action="" class="space-y-5">
+        <form
+          id="registerForm"
+          method="POST"
+          action="{% url 'main:register' %}"
+          class="space-y-5"
+        >
           {% csrf_token %}
-
+          <div
+            id="messageBox"
+            class="hidden px-4 py-3 rounded text-sm mb-4"
+          ></div>
           <div>
             <label
               for="username"
@@ -124,3 +134,50 @@
   </div>
 </div>
 {% endblock content %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registerForm");
+    const messageBox = document.getElementById("messageBox");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const csrftoken = document.querySelector(
+        "[name=csrfmiddlewaretoken]"
+      ).value;
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrftoken,
+          },
+          body: formData,
+          credentials: "same-origin",
+        });
+
+        const data = await response.json();
+
+        messageBox.classList.remove("hidden");
+        messageBox.textContent = data.message;
+
+        if (data.success) {
+          messageBox.className =
+            "px-4 py-3 rounded text-sm border bg-green-50 border-green-200 text-green-700 mb-4";
+          setTimeout(() => {
+            window.location.href = "{% url 'main:login' %}";
+          }, 1500);
+        } else {
+          messageBox.className =
+            "px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-4";
+        }
+      } catch (error) {
+        messageBox.classList.remove("hidden");
+        messageBox.className =
+          "px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-4";
+        messageBox.textContent = "An error occurred. Please try again.";
+      }
+    });
+  });
+</script>

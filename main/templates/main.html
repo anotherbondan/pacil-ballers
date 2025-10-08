@@ -6,46 +6,95 @@
     <!-- Header Section -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Latest Product</h1>
-      <p class="text-gray-600">
-        Stay updated with the latest football product
-      </p>
+      <p class="text-gray-600">Stay updated with the latest football product</p>
     </div>
+
+    <button
+      class="group bg-gradient-to-r from-blue-400 to-red-400 text-white border border-gray-300 px-4 py-2 mb-4 rounded-md font-medium transition-all"
+      onclick="showModal()"
+    >
+      <span class="transition-all"> + Add Product </span>
+    </button>
 
     <!-- Filter Section -->
     <div
       class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4"
     >
       <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a
-          href="?"
-          class="group {% if request.GET.filter == 'all' or not request.GET.filter %} bg-gradient-to-tr from-blue-400 to-red-400 text-white{% else %} bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-all"
+        <button
+          id="filter-all"
+          class="group bg-gradient-to-r from-blue-400 to-red-400 text-white border border-gray-300 px-4 py-2 rounded-lg font-medium transition-all"
+        >
+          <span id="text-all" class="transition-all"> All Product </span>
+        </button>
+        <button
+          id="filter-my"
+          class="group bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-lg font-medium transition-all"
         >
           <span
-            class="transition-all {% if request.GET.filter != 'all' and request.GET.filter %} group-hover:bg-gradient-to-tr group-hover:from-blue-400 group-hover:to-red-400 group-hover:bg-clip-text group-hover:text-transparent{% endif %}"
-          >
-            All Product
-          </span>
-        </a>
-        <a
-          href="?filter=my"
-          class="group {% if request.GET.filter == 'my' %} bg-gradient-to-tr from-blue-400 to-red-400 text-white{% else %} bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-all"
-        >
-          <span
-            class="transition-all {% if request.GET.filter != 'my' %} group-hover:bg-gradient-to-tr group-hover:from-blue-400 group-hover:to-red-400 group-hover:bg-clip-text group-hover:text-transparent {% endif %}"
+            id="text-my"
+            class="group-hover:bg-gradient-to-tr group-hover:from-blue-400 group-hover:to-red-400 group-hover:bg-clip-text group-hover:text-transparent transition-all"
           >
             My Product
           </span>
-        </a>
+        </button>
+        <button
+          onclick="refresh()"
+          class="group bg-gradient-to-r from-blue-400 to-red-400 border border-gray-300 p-1 rounded-full transition-all"
+        >
+          <img
+            src="{% static 'image/refresh.png' %}"
+            alt="icon"
+            class="w-full h-full group-hover:rotate-45 duration-300 transform"
+          />
+        </button>
       </div>
       {% if user.is_authenticated %}
       <div class="text-sm text-gray-500">Last login: {{ last_login }}</div>
       {% endif %}
     </div>
+    <!-- Loading State -->
+    <div
+      id="loading"
+      class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden"
+    >
+      <svg
+        class="animate-spin h-8 w-8 text-blue-600 inline-block"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+        ></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading product...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden"></div>
 
     <!-- Product Grid -->
-    {% if not product_list %}
-    <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-      <div class="w-32 h-32 mx-auto mb-4 hover:rotate-6 transition-all duration-700">
+    <div id="grid" class="hidden"></div>
+
+    <!-- Empty State -->
+    <div
+      id="empty"
+      class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden"
+    >
+      <div
+        class="w-32 h-32 mx-auto mb-4 hover:rotate-6 transition-all duration-700"
+      >
         <img
           src="{% static 'image/no-product.png' %}"
           alt="No product available"
@@ -53,9 +102,7 @@
         />
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">No product found</h3>
-      <p class="text-gray-500 mb-6">
-        Be the first to sell football products
-      </p>
+      <p class="text-gray-500 mb-6">Be the first to sell football products</p>
       <a
         href="{% url 'main:create_product' %}"
         class="inline-flex items-center px-4 py-2 bg-gradient-to-tr from-blue-400 to-red-400 text-white rounded-md hover:brightness-90 transition-all"
@@ -63,11 +110,263 @@
         Create Product
       </a>
     </div>
-    {% else %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for product in product_list %} {% include 'card_product.html' with product=product %} {% endfor %}
-    </div>
-    {% endif %}
   </div>
 </div>
+<script>
+  // Configuration
+  const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+  const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+  // DOM Elements
+  const loadingSpinner = document.getElementById("loading");
+  const errorMessage = document.getElementById("error");
+  const emptyStateDisplay = document.getElementById("empty");
+  const productGridContainer = document.getElementById("grid");
+  const showAllProductButton = document.getElementById("filter-all");
+  const showMyProductButton = document.getElementById("filter-my");
+  const textAllProductButton = document.getElementById("text-all");
+  const textMyProductButton = document.getElementById("text-my");
+
+  // State Variables
+  let activeFilter = "all";
+  let allProductData = [];
+
+  function refresh() {
+    window.location.reload();
+  }
+
+  // Update filter button appearance
+  function updateFilterButtonsAppearance() {
+    if (
+      !showAllProductButton ||
+      !showMyProductButton ||
+      !textAllProductButton ||
+      !textMyProductButton
+    )
+      return;
+
+    if (activeFilter === "all") {
+      showAllProductButton.className =
+        "group bg-gradient-to-r from-blue-400 to-red-400 text-white border border-gray-300 px-4 py-2 rounded-md font-medium transition-all";
+      showMyProductButton.className =
+        "group bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-all";
+      textAllProductButton.className = "transition-all";
+      textMyProductButton.className =
+        "group-hover:bg-gradient-to-tr group-hover:from-blue-400 group-hover:to-red-400 group-hover:bg-clip-text group-hover:text-transparent transition-all";
+    } else {
+      showMyProductButton.className =
+        "group bg-gradient-to-r from-blue-400 to-red-400 text-white border border-gray-300 px-4 py-2 rounded-md font-medium transition-all";
+      showAllProductButton.className =
+        "group bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-all";
+      textMyProductButton.className = "transition-all";
+      textAllProductButton.className =
+        "group-hover:bg-gradient-to-tr group-hover:from-blue-400 group-hover:to-red-400 group-hover:bg-clip-text group-hover:text-transparent transition-all";
+    }
+  }
+
+  // Show/hide page sections
+  function displayPageSection({
+    showLoading = false,
+    showError = false,
+    showEmpty = false,
+    showGrid = false,
+  }) {
+    loadingSpinner.classList.toggle("hidden", !showLoading);
+    errorMessage.classList.toggle("hidden", !showError);
+    emptyStateDisplay.classList.toggle("hidden", !showEmpty);
+    productGridContainer.classList.toggle("hidden", !showGrid);
+
+    // Add grid classes when showing grid
+    if (showGrid) {
+      productGridContainer.className =
+        "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6";
+    }
+  }
+
+  // Get readable category name
+  function getReadableCategoryName(categoryCode) {
+    const categoryMapping = {
+      boots: "Boots",
+      jersey: "Jersey",
+      ball: "Ball",
+      other: "Other",
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+  }
+
+  // Render all product cards
+  function renderAllProductCards(productItems) {
+    productGridContainer.innerHTML = "";
+    productItems.forEach((productItem) => {
+      const cardElement = buildProductCardElement(productItem);
+      productGridContainer.appendChild(cardElement);
+    });
+  }
+
+  // Filter and display product
+  function filterAndDisplayProduct() {
+    updateFilterButtonsAppearance();
+
+    const filteredProduct =
+      activeFilter === "all"
+        ? allProductData
+        : allProductData.filter(
+            (product) => Number(product.user_id) === Number(CURRENT_USER_ID)
+          );
+
+    if (filteredProduct.length === 0) {
+      displayPageSection({ showEmpty: true });
+    } else {
+      renderAllProductCards(filteredProduct);
+      displayPageSection({ showGrid: true });
+    }
+  }
+
+  // Fetch product data from server
+  async function fetchProductFromServer() {
+    try {
+      displayPageSection({ showLoading: true });
+
+      const response = await fetch(PRODUCT_API_ENDPOINT, {
+        headers: { Accept: "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch product data from server");
+      }
+
+      const productData = await response.json();
+      allProductData = productData || [];
+
+      filterAndDisplayProduct();
+    } catch (error) {
+      console.error("Error loading product:", error);
+      displayPageSection({ showError: true });
+    }
+  }
+
+  // Event handlers
+  function handleShowAllProductClick() {
+    activeFilter = "all";
+    filterAndDisplayProduct();
+  }
+
+  function handleShowMyProductClick() {
+    activeFilter = "my";
+    filterAndDisplayProduct();
+  }
+
+  // Initialize page
+  function initializeProductPage() {
+    showAllProductButton.addEventListener("click", handleShowAllProductClick);
+    showMyProductButton.addEventListener("click", handleShowMyProductClick);
+
+    fetchProductFromServer();
+  }
+
+  // Start application
+  initializeProductPage();
+
+  // Add event listener to detect new product
+  document.addEventListener("productAdded", function () {
+    // Refresh data without page reload
+    fetchProductFromServer();
+  });
+
+  function buildProductCardElement(item) {
+    const article = document.createElement("article");
+    article.className =
+      "bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col h-full";
+
+    const linkDetail =
+      `{% url 'main:show_product' '00000000-0000-0000-0000-000000000000' %}`.replace(
+        "00000000-0000-0000-0000-000000000000",
+        item.id
+      );
+    const editIcon = "{% static 'image/edit.png' %}";
+    const deleteIcon = "{% static 'image/delete.png' %}";
+
+    const name = DOMPurify.sanitize(item.name);
+    const description = DOMPurify.sanitize(item.description);
+    const price = DOMPurify.sanitize(String(item.price));
+    const category = DOMPurify.sanitize(item.category);
+    const thumbnail = DOMPurify.sanitize(item.thumbnail);
+    const isFeatured = item.is_featured;
+
+    const thumbnailHtml = DOMPurify.sanitize(
+      item.thumbnail
+        ? `<img src='${thumbnail}' alt='${name}' class='w-full h-full object-cover'>`
+        : `<div class='w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center'></div>`
+    );
+    const categoryLabel = DOMPurify.sanitize(getReadableCategoryName(category));
+    const featuredLabel = isFeatured
+      ? DOMPurify.sanitize(
+          `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800'>Featured</span>`
+        )
+      : "";
+
+    const editDeleteHtml =
+      CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(item.user_id)
+        ? `<div class='flex space-x-2'>
+            <button onclick="showEditModal('${item.id}', '${name}', '${price}', '${description}', '${category}', '${thumbnail}', '${isFeatured}')" class='hover:bg-gray-50 hover:backdrop-blur-lg p-2 w-8 h-8 rounded-full transition-all'>
+              <img
+                src=${editIcon}
+                alt="edit"
+                class="w-full h-full object-cover"
+                onclick="showEditModal(item)"
+              />
+            </button>
+            <button onclick="showDeleteModal('${item.id}', '${name}')" class='hover:bg-gray-50 hover:backdrop-blur-lg p-2 w-8 h-8 rounded-full transition-all' ><img
+                src=${deleteIcon}
+                alt="delete"
+                class="w-full h-full object-cover"
+              /></button>
+          </div>`
+        : "";
+
+    const cardHtml = `
+        <a href="${linkDetail}">
+        <div class="flex flex-col h-full">
+          <div class="aspect-[1/1] relative overflow-hidden">
+            ${thumbnailHtml}
+            <div class="absolute top-3 px-3 flex w-full justify-between">
+              <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-600 text-white">
+              ${categoryLabel}
+              </span>
+              ${featuredLabel}
+            </div>
+          </div>
+
+          <div class="flex flex-col justify-between p-5 grow">
+            <div class="flex flex-col">
+              <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
+                <a href="${linkDetail}" class="hover:text-blue-600 transition-all">
+                  ${name}
+                </a>
+              </h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-3 line-clamp-2 leading-tight">
+                <i>Rp${price},-</i>
+              </h3>
+
+              <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                ${description}
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <a href="${linkDetail}" class="text-blue-600 hover:text-blue-700 font-medium text-sm transition-all">
+                See details →
+              </a>
+              ${editDeleteHtml}
+            </div>
+          </div>
+        </div>
+      </a>
+    `;
+
+    article.innerHTML = cardHtml;
+    return article;
+  }
+</script>
 {% endblock content %}

@@ -37,14 +37,25 @@
       </div>
       {% endif %}
 
-      <form method="POST" action="" class="space-y-6">
+      <form
+        id="loginForm"
+        method="POST"
+        action="{% url 'main:login' %}"
+        class="space-y-6"
+      >
         {% csrf_token %}
+        <div
+          id="messageBox"
+          class="hidden px-4 py-3 rounded-md text-sm mb-4"
+        ></div>
+
         <div>
           <label
             for="username"
             class="block text-sm font-medium text-gray-700 mb-2"
-            >Username</label
           >
+            Username
+          </label>
           <input
             id="username"
             name="username"
@@ -59,8 +70,9 @@
           <label
             for="password"
             class="block text-sm font-medium text-gray-700 mb-2"
-            >Password</label
           >
+            Password
+          </label>
           <input
             id="password"
             name="password"
@@ -107,3 +119,53 @@
   </div>
 </div>
 {% endblock content %}
+<script>
+  document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const messageBox = document.getElementById("messageBox");
+      const formData = new FormData(form);
+
+      // Ambil CSRF token dari input
+      const csrftoken = document.querySelector(
+        "[name=csrfmiddlewaretoken]"
+      ).value;
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrftoken,
+          },
+          body: formData,
+          credentials: "same-origin",
+        });
+
+        const data = await response.json();
+
+        // Tampilkan pesan ke user
+        messageBox.classList.remove("hidden");
+        messageBox.textContent = data.message;
+
+        if (data.success) {
+          messageBox.className =
+            "px-4 py-3 rounded-md text-sm border bg-green-50 border-green-200 text-green-700 mb-4";
+          // Redirect setelah sukses (opsional)
+          setTimeout(() => {
+            window.location.href = data.redirect_url;
+          }, 1000);
+        } else {
+          messageBox.className =
+            "px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-4";
+        }
+      } catch (error) {
+        messageBox.classList.remove("hidden");
+        messageBox.className =
+          "px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-4";
+        messageBox.textContent = "An error occurred. Please try again.";
+      }
+    });
+</script>
