@@ -4,6 +4,7 @@
 - [Tugas 3](#tugas-3)
 - [Tugas 4](#tugas-4)
 - [Tugas 5](#tugas-5)
+- [Tugas 6](#tugas-6)
 ## Tugas 2
 ### Step-by-step melengkapi checklist
 
@@ -710,3 +711,32 @@ padding: 15px;
 Flexbox bekerja dengan konsep satu dimensi, di mana hanya dapat mengatur elemen dalam satu arah, baik secara vertikal maupun horizontal. Flexbox memungkinkan sebuah elemen untuk menyesuaikan ukurannya sesuai dengan ruang yang tersedia secara otomatis. Flexbox juga dapat mengatur jarak antar elemen di dalamnya dan proporsi ruang yang dimiliki oleh masing-masing elemen. Dalam immplementasi nyata, flexbox biasanya digunakan untuk mengatur susunan input form, list menu, dan tombol navigasi.
 
 Grid layout bekerja dengan konsep dua dimensi, dimana baris dan kolom elemen dapat diatur sekaligus. Grid layout dapat menentukan berapa banyak kolom dan baris yang dibutuhkan, serta bagaimana tiap elemen menempati posisi tertentu di dalam sebuah grid. Grid memungkinkan tata letak yang lebih kompleks dan terstruktur rapi, mirip dengan tabel, tetapi jauh lebih fleksibel dan responsif. Grid biasanya digunakan untuk membangun sebuah halaman dashboard yang memiliki tata letak elemen yang kompleks, seperti header, footer, sidebar, dan content.
+
+## Tugas 6
+### Apa perbedaan antara synchronous request dan asynchronous request?
+Perbedaan utama antara synchronous request dan asynchronous request terletak pada cara eksekusi dan responsnya terhadap server. Pada synchronous request, proses akan menunggu hingga server mengembalikan respons sebelum melanjutkan ke langkah berikutnya, sehingga dapat menyebabkan aplikasi terasa lambat atau “terhenti” sementara. Sebaliknya, asynchronous request memungkinkan program melanjutkan eksekusi tanpa harus menunggu respons dari server, permintaan dikirim di latar belakang, dan hasilnya akan diproses saat sudah tersedia. Pendekatan asynchronous ini umum digunakan pada aplikasi web modern, misalnya melalui AJAX, untuk meningkatkan interaktivitas dan responsivitas halaman.
+
+### Bagaimana AJAX bekerja di Django (alur request–response)?
+Dalam Django, AJAX bekerja dengan menghubungkan interaksi pengguna di sisi frontend (browser) dengan backend (server Django) tanpa perlu me-reload seluruh halaman. Alur request–response-nya dapat dijelaskan sebagai berikut:
+1. Pengguna melakukan aksi di browser, misalnya menekan tombol atau mengisi form.
+2. JavaScript (biasanya dengan fetch() atau jQuery AJAX) mengirimkan asynchronous request ke server Django melalui URL tertentu (misalnya endpoint view).
+3. Django menerima request tersebut di sisi backend, biasanya melalui view function yang memproses data dari request (GET atau POST), melakukan query ke database, atau menjalankan logika tertentu.
+4. Setelah selesai diproses, view Django mengembalikan respons JSON (bukan seluruh halaman HTML).
+5. JavaScript di sisi klien menerima respons JSON tersebut dan kemudian memperbarui tampilan halaman (DOM) secara dinamis, misalnya menampilkan pesan sukses atau memperbarui data tabel.
+Dengan demikian, AJAX di Django memungkinkan komunikasi real-time dan efisien antara frontend dan backend tanpa harus memuat ulang seluruh halaman web.
+
+### Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+Keuntungan utama menggunakan AJAX dibandingkan render biasa di Django adalah peningkatan interaktivitas dan efisiensi dalam aplikasi web. Dengan AJAX, halaman tidak perlu di-reload sepenuhnya setiap kali pengguna melakukan aksi, hanya bagian tertentu dari halaman yang diperbarui. Hal ini membuat aplikasi terasa lebih cepat, responsif, dan nyaman digunakan. Selain itu, AJAX juga mengurangi beban server dan penggunaan bandwidth, karena data yang dikirim dan diterima lebih sedikit (biasanya berupa JSON, bukan seluruh HTML). AJAX juga memungkinkan komunikasi real-time seperti validasi form secara langsung, update konten dinamis, atau pengambilan data tanpa perpindahan halaman, yang sulit dicapai dengan render biasa di Django.
+
+### Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+Untuk memastikan keamanan saat menggunakan AJAX pada fitur Login dan Register di Django, ada beberapa langkah penting yang perlu diterapkan:
+1. Gunakan CSRF Token – Django secara default menyediakan proteksi CSRF (Cross-Site Request Forgery). Saat mengirim request AJAX (terutama POST), pastikan token CSRF disertakan di header atau body request agar Django dapat memverifikasinya.
+2. Gunakan HTTPS – Selalu jalankan aplikasi melalui protokol HTTPS untuk mengenkripsi data sensitif seperti username dan password agar tidak mudah disadap.
+3. Validasi Input di Server – Jangan hanya mengandalkan validasi di JavaScript. Semua data dari AJAX harus divalidasi ulang di sisi server untuk mencegah injeksi data berbahaya (SQL injection, XSS, dsb.).
+4. Batasi Data pada Respons – Kirimkan hanya data yang diperlukan (misalnya pesan sukses atau error), jangan pernah mengembalikan data sensitif seperti password atau session key melalui JSON.
+5. Gunakan Django Authentication System – Gunakan fungsi bawaan Django seperti authenticate() dan login() untuk memastikan login dilakukan dengan cara yang aman dan sesuai standar framework.
+6. Rate Limiting & Captcha – Untuk mencegah brute force atau spam register, tambahkan mekanisme pembatasan jumlah percobaan login dan captcha saat pendaftaran
+Dengan kombinasi langkah-langkah ini, AJAX login dan register di Django dapat tetap aman, efisien, dan terlindungi dari serangan umum di web.
+
+### Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+AJAX secara signifikan meningkatkan pengalaman pengguna (User Experience) pada website karena memungkinkan interaksi yang cepat, responsif, dan dinamis tanpa perlu memuat ulang seluruh halaman. Dengan AJAX, setiap aksi pengguna, seperti mengirim form, memfilter data, atau menekan tombol “like”, dapat langsung menampilkan hasilnya secara real-time. Hal ini membuat alur penggunaan terasa lebih mulus dan alami, mirip seperti aplikasi desktop atau mobile. Selain itu, AJAX membantu mengurangi waktu tunggu dan gangguan visual akibat reload halaman penuh, sehingga pengguna dapat tetap fokus pada konten yang sedang mereka lihat. Secara keseluruhan, penggunaan AJAX memberikan kesan modern, efisien, dan interaktif pada website.
